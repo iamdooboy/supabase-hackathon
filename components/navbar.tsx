@@ -1,13 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
-import { Button, buttonVariants } from '@/ui/button'
+import { buttonVariants } from '@/ui/button'
 import { UserAccountDropdown } from '@/user-account-dropdown'
 import { Paintbrush2 } from 'lucide-react'
 
 import { getCurrentUser } from '@/lib/session'
 import { cn } from '@/lib/utils'
 
-export async function Header() {
+export async function Navbar() {
   const user = await getCurrentUser()
   return (
     <header className='sticky top-0 z-40 border-b bg-background'>

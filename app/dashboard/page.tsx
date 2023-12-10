@@ -1,9 +1,10 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Paintbrush2 } from 'lucide-react'
+import { createNewDrawing } from '@/actions/actions'
 
 import { getCurrentUser } from '@/lib/session'
-import { UserAccountDropdown } from '@/components/user-account-dropdown'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DashboardHeader } from '@/components/dashboard-header'
+import { NewDrawingButton } from '@/components/new-drawing-button'
 
 export const metadata = {
   title: 'Dashboard',
@@ -16,5 +17,23 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  return <div className='flex min-h-screen flex-col space-y-6 mx-auto '>dashboard</div>
+  return (
+    <div className='flex min-h-screen flex-col space-y-6'>
+      <DashboardHeader heading='Drawings'>
+        <form action={createNewDrawing}>
+          <NewDrawingButton />
+        </form>
+      </DashboardHeader>
+      <Tabs defaultValue='account' className='w-[400px]'>
+        <TabsList>
+          <TabsTrigger value='account'>Drafts</TabsTrigger>
+          <TabsTrigger value='password'>Published</TabsTrigger>
+        </TabsList>
+        <TabsContent value='account'>
+          Make changes to your account here.
+        </TabsContent>
+        <TabsContent value='password'>Change your password here.</TabsContent>
+      </Tabs>
+    </div>
+  )
 }

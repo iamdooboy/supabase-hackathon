@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 
 import { Toaster } from '@/components/ui/toaster'
-import { Header } from '@/components/header'
+import { Navbar } from '@/components/navbar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
         <div className='relative flex min-h-screen flex-col'>
-          <Header />
+          <Navbar />
           <div className='flex-1'>{children}</div>
           <Toaster />
         </div>
