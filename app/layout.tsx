@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 
 import './globals.css'
 
+import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/toaster'
 import { Navbar } from '@/components/navbar'
 
@@ -19,13 +20,25 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    // <html lang='en' suppressHydrationWarning>
+    //   <body className={inter.className}>
+    //     <div className='relative flex min-h-screen flex-col'>
+    //       <Navbar />
+    //       <div className='flex-1'>{children}</div>
+    //       <Toaster />
+    //     </div>
+    //   </body>
+    // </html>
+
     <html lang='en' suppressHydrationWarning>
-      <body className={inter.className}>
-        <div className='relative flex min-h-screen flex-col'>
-          <Navbar />
-          <div className='flex-1'>{children}</div>
-          <Toaster />
-        </div>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased',
+          inter.className
+        )}
+      >
+        <div className='flex-1'>{children}</div>
+        <Toaster />
       </body>
     </html>
   )
