@@ -12,8 +12,9 @@ interface DrawToolbarProps {
 
 export function DrawingToolbar({ children }: DrawToolbarProps) {
   return (
-    <div className='fixed bottom-4 left-1/2 transform -translate-x-1/2'>
-      <div className='flex flex-col'>
+    <div>
+      {children}
+      <div className='fixed bottom-4 left-1/2 transform -translate-x-1/2'>
         <div className='flex gap-2 items-center justify-center max-w-fit shadow-md rounded-md p-2 border mx-auto bg-background'>
           <RadioGroup defaultValue='draw' className='grid grid-cols-3 gap-4'>
             <div>
