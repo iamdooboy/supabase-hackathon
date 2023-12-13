@@ -45,7 +45,7 @@ export async function createNewDrawing() {
     .insert({
       prompt: promptData?.at(0)?.prompt,
       created_by: user?.user_metadata.full_name,
-      preview_data: 'blob:fasdfadfkagbibq3iubguqb3f',
+      preview_data: '',
     })
     .select()
 

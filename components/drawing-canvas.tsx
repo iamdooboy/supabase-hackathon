@@ -1,26 +1,33 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { DrawingToolbar } from '@/drawing-toolbar'
+import { DrawingCanvasProps } from '@/types'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Circle, Layer, Line, Rect, Stage, StageProps, Text } from 'react-konva'
 
-function DrawingCanvas({ preview }: { preview: string }) {
+let stage: StageProps
+
+function DrawingCanvas({ data }: { data: DrawingCanvasProps }) {
   const [tool, setTool] = React.useState<string>('pen')
   const [lines, setLines] = React.useState<any[]>([])
+  //const [stage, setStage] = useState<any>(null)
   const isDrawing = React.useRef(false)
 
-  const handleMouseDown = (e: any) => {
+  const supabase = createClientComponentClient()
+
+  const handleMouseDown = (e: StageProps) => {
     isDrawing.current = true
     const pos = e.target.getStage().getPointerPosition()
     setLines([...lines, { tool, points: [pos.x, pos.y] }])
   }
 
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = (e: StageProps) => {
     // no drawing - skipping
     if (!isDrawing.current) {
       return
     }
-    const stage = e.target.getStage()
+    stage = e.target.getStage()
     const point = stage.getPointerPosition()
     let lastLine = lines[lines.length - 1]
     // add point
@@ -31,8 +38,19 @@ function DrawingCanvas({ preview }: { preview: string }) {
     setLines(lines.concat())
   }
 
-  const handleMouseUp = () => {
+  const handleMouseUp = async () => {
     isDrawing.current = false
+    if (stage) {
+      const preview = stage?.toDataURL({ pixelRatio: 1 })
+      try {
+        await supabase
+          .from('drawings')
+          .update({ preview_data: preview })
+          .eq('id', data.id)
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   return (
@@ -64,7 +82,7 @@ function DrawingCanvas({ preview }: { preview: string }) {
           </Layer>
         </Stage>
       </div>
-      <DrawingToolbar setTool={setTool} isDrawing={isDrawing}/>
+      <DrawingToolbar setTool={setTool} isDrawing={isDrawing} />
     </>
   )
 }

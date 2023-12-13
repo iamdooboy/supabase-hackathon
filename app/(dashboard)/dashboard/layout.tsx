@@ -28,17 +28,5 @@ export default async function DashboardLayout({
         </main>
       </div>
     </div>
-
-    // <div className='container gap-6 mt-6'>
-    //   <DrawingToolbar>
-    //     <div className='bg-gray-200 min-w-2xl w-full'>fhlsd</div>
-    //   </DrawingToolbar>
-    // </div>
-    // <div className='container grid flex-1 gap-12 md:grid-cols-[200px_1fr] mt-6'>
-    //   <Sidebar />
-    //   <main className='flex w-full flex-1 flex-col overflow-hidden'>
-    //     {children}
-    //   </main>
-    // </div>
   )
 }

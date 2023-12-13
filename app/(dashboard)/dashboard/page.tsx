@@ -1,13 +1,32 @@
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createNewDrawing } from '@/actions/actions'
+import { Database } from '@/types'
+import {
+  createServerComponentClient,
+  User,
+} from '@supabase/auth-helpers-nextjs'
 
 import { getCurrentUser } from '@/lib/session'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DashboardHeader } from '@/components/dashboard-header'
 import { NewDrawingButton } from '@/components/new-drawing-button'
+import { Posts } from '@/components/posts'
 
 export const metadata = {
   title: 'Dashboard',
+}
+
+const supabase = createServerComponentClient<Database>({ cookies })
+
+async function getDrawings(privacy: string, user: User) {
+  const { data, error } = await supabase
+    .from('drawings')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('privacy', privacy)
+
+  return { data, error }
 }
 
 export default async function DashboardPage() {
@@ -17,6 +36,14 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
+  const privateData = await getDrawings('private', user)
+  const publicData = await getDrawings('public', user)
+
+  const [privatePosts, publicPosts] = await Promise.all([
+    privateData,
+    publicData,
+  ])
+
   return (
     <div className='flex min-h-screen flex-col space-y-6'>
       <DashboardHeader heading='Drawings'>
@@ -24,13 +51,16 @@ export default async function DashboardPage() {
           <NewDrawingButton />
         </form>
       </DashboardHeader>
-      <Tabs defaultValue='account' className='w-[400px]'>
+      <Tabs defaultValue='account'>
         <TabsList>
-          <TabsTrigger value='account'>Drafts</TabsTrigger>
-          <TabsTrigger value='password'>Published</TabsTrigger>
+          <TabsTrigger value='account'>Private</TabsTrigger>
+          <TabsTrigger value='password'>Public</TabsTrigger>
         </TabsList>
-        <TabsContent value='account'>
-          Make changes to your account here.
+        <TabsContent
+          className='flex items-center justify-start gap-3'
+          value='account'
+        >
+          <Posts posts={privatePosts} />
         </TabsContent>
         <TabsContent value='password'>Change your password here.</TabsContent>
       </Tabs>

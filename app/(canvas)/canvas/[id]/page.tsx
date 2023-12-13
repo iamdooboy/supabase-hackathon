@@ -1,11 +1,12 @@
 import dynamic from 'next/dynamic'
 import { cookies } from 'next/headers'
+import { DrawingCanvasProps } from '@/types'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 
 import { CanvasHeader } from '@/components/canvas-header'
 import { DrawingToolbar } from '@/components/drawing-toolbar'
 
-const DrawingCanvas = dynamic<{ preview: string }>(
+const DrawingCanvas = dynamic<{ data: DrawingCanvasProps }>(
   () => import('@/components/drawing-canvas') as any,
   {
     ssr: false,
@@ -28,10 +29,15 @@ export default async function DrawingPadPage({
       <CanvasHeader
         info={{
           prompt: data?.at(0).prompt,
-          type: data?.at(0).type,
+          privacy: data?.at(0).privacy,
         }}
       />
-      <DrawingCanvas preview={data?.at(0).preview_data} />
+      <DrawingCanvas
+        data={{
+          preview: data?.at(0).preview_data,
+          id: data?.at(0).id,
+        }}
+      />
     </>
   )
 }

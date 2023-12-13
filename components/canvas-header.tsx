@@ -10,7 +10,7 @@ import { Label } from './ui/label'
 interface CanvasHeaderProps {
   info: {
     prompt: string
-    type: string
+    privacy: string
   }
 }
 
@@ -30,10 +30,9 @@ export function CanvasHeader({ info }: CanvasHeaderProps) {
           <Label className='font-bold underline text-lg'>{info.prompt}</Label>
         </div>
         <div className='flex items-center gap-4'>
-          <p className='text-sm text-muted-foreground'>{info.type}</p>
+          <p className='text-sm text-muted-foreground'>{info.privacy}</p>
           <button type='submit' className={cn(buttonVariants())}>
-            {/* {isSaving && <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />} */}
-            <span>Save</span>
+            <span>Publish</span>
           </button>
         </div>
       </div>
