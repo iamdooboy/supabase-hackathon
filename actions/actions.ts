@@ -7,6 +7,7 @@ import {
   createServerComponentClient,
 } from '@supabase/auth-helpers-nextjs'
 
+import { getCurrentUser } from '@/lib/session'
 import { toast } from '@/components/ui/use-toast'
 
 export const signOut = async () => {
@@ -29,23 +30,28 @@ export const signOut = async () => {
 // action.ts
 export async function createNewDrawing() {
   'use server'
+
+  const user = await getCurrentUser()
+
   const supabase = createServerComponentClient({ cookies })
+  const random = Math.floor(Math.random() * 101)
+  const { data: promptData, error: promptError } = await supabase
+    .from('drawing_prompts')
+    .select('prompt')
+    .eq('id', random)
+
   const { data, error } = await supabase
     .from('drawings')
     .insert({
-      prompt: 'apple',
-      created_by: 'Duy Le',
+      prompt: promptData?.at(0)?.prompt,
+      created_by: user?.user_metadata.full_name,
       preview_data: 'blob:fasdfadfkagbibq3iubguqb3f',
     })
     .select()
 
-  if (error) {
-    return toast({
-      title: 'Something went wrong.',
-      description: 'Your post was not saved. Please try again.',
-      variant: 'destructive',
-    })
+  if (promptError) {
+    throw new Error('something went wrong')
   }
 
-  redirect(`/canvas/${data[0].id}`)
+  redirect(`/canvas/${data?.at(0).id}`)
 }
