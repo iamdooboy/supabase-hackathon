@@ -20,11 +20,20 @@ interface Props {
 
 export function Posts({ posts }: Props) {
   return (
-    <div className='py-4 flex flex-col items-start md:grid md:grid-cols-3 gap-4'>
+    <div className='py-3 flex flex-col items-start md:grid md:grid-cols-3 gap-4'>
       {posts?.data?.length === 0 && (
         <p className='text-muted-foreground text-sm'>Start a new drawing!</p>
       )}
-      {posts?.data?.map((drawing) => <Drawing />)}
+      {posts?.data?.map((drawing) => (
+        <Drawing
+          key={drawing.id}
+          data={{
+            prompt: drawing.prompt,
+            created_at: drawing.created_at,
+            preview: drawing.preview_data,
+          }}
+        />
+      ))}
     </div>
   )
 }

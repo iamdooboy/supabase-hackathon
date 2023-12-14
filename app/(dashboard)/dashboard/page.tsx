@@ -51,18 +51,17 @@ export default async function DashboardPage() {
           <NewDrawingButton />
         </form>
       </DashboardHeader>
-      <Tabs defaultValue='account'>
+      <Tabs defaultValue='private'>
         <TabsList>
-          <TabsTrigger value='account'>Private</TabsTrigger>
-          <TabsTrigger value='password'>Public</TabsTrigger>
+          <TabsTrigger value='private'>Private</TabsTrigger>
+          <TabsTrigger value='public'>Public</TabsTrigger>
         </TabsList>
-        <TabsContent
-          className='flex items-center justify-start gap-3'
-          value='account'
-        >
+        <TabsContent value='private'>
           <Posts posts={privatePosts} />
         </TabsContent>
-        <TabsContent value='password'>Change your password here.</TabsContent>
+        <TabsContent value='public'>
+          <Posts posts={publicPosts} />
+        </TabsContent>
       </Tabs>
     </div>
   )

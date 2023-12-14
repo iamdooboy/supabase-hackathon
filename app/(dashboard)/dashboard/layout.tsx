@@ -23,7 +23,7 @@ export default async function DashboardLayout({
       <Navbar />
       <div className='container grid flex-1 gap-12 md:grid-cols-[200px_1fr]'>
         <Sidebar />
-        <main className='flex w-full flex-1 flex-col overflow-hidden'>
+        <main className='flex-1'>
           {children}
         </main>
       </div>
