@@ -10,8 +10,8 @@ import {
 import { getCurrentUser } from '@/lib/session'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DashboardHeader } from '@/components/dashboard-header'
+import { DrawingDisplayCardList } from '@/components/drawing-display-card-list'
 import { NewDrawingButton } from '@/components/new-drawing-button'
-import { Posts } from '@/components/posts'
 
 export const metadata = {
   title: 'Dashboard',
@@ -57,10 +57,10 @@ export default async function DashboardPage() {
           <TabsTrigger value='public'>Public</TabsTrigger>
         </TabsList>
         <TabsContent value='private'>
-          <Posts posts={privatePosts} />
+          <DrawingDisplayCardList posts={privatePosts} />
         </TabsContent>
         <TabsContent value='public'>
-          <Posts posts={publicPosts} />
+          <DrawingDisplayCardList posts={publicPosts} />
         </TabsContent>
       </Tabs>
     </div>

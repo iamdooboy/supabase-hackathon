@@ -35,6 +35,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-tailwindcss": "^3.13.0",
+    "javascript-time-ago": "^2.5.9",
     "konva": "^9.2.3",
     "lucide-react": "^0.294.0",
     "next": "14.0.4",

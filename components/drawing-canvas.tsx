@@ -1,17 +1,18 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { DrawingToolbar } from '@/drawing-toolbar'
 import { DrawingCanvasProps } from '@/types'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Circle, Layer, Line, Rect, Stage, StageProps, Text } from 'react-konva'
+import { Layer, Line, Stage, StageProps } from 'react-konva'
+
+import { OldDrawing } from './old-drawing'
 
 let stage: StageProps
 
 function DrawingCanvas({ data }: { data: DrawingCanvasProps }) {
   const [tool, setTool] = React.useState<string>('pen')
   const [lines, setLines] = React.useState<any[]>([])
-  //const [stage, setStage] = useState<any>(null)
   const isDrawing = React.useRef(false)
 
   const supabase = createClientComponentClient()
@@ -65,6 +66,7 @@ function DrawingCanvas({ data }: { data: DrawingCanvasProps }) {
           draggable={tool === 'grab'}
         >
           <Layer>
+            <OldDrawing preview={data?.preview} />
             {lines.map((line, i) => (
               <Line
                 key={i}
