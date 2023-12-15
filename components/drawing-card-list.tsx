@@ -1,4 +1,4 @@
-import { DrawingDisplayCard } from './drawing-display-card'
+import { DrawingCard } from '@/drawing-card'
 
 interface Props {
   posts: {
@@ -16,14 +16,14 @@ interface Props {
   }
 }
 
-export function DrawingDisplayCardList({ posts }: Props) {
+export function DrawingCardList({ posts }: Props) {
   return (
     <div className='py-3 flex flex-col items-start md:grid md:grid-cols-3 gap-4'>
       {posts?.data?.length === 0 && (
         <p className='text-muted-foreground text-sm'>Start a new drawing!</p>
       )}
       {posts?.data?.map((drawing) => (
-        <DrawingDisplayCard
+        <DrawingCard
           key={drawing.id}
           data={{
             id: drawing.id,

@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bookmark, Compass, PencilRuler } from 'lucide-react'
+import { Compass, PencilRuler, Trophy } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -11,17 +11,17 @@ const sidebarNav = [
   {
     title: 'Drawings',
     href: '/dashboard',
-    icon: <PencilRuler className="mr-2 h-4 w-4"/>,
+    icon: <PencilRuler className='mr-2 h-4 w-4' />,
   },
   {
     title: 'Explore',
-    href: '/dashboard/explore',
-    icon: <Compass className="mr-2 h-4 w-4"/>,
+    href: '/explore',
+    icon: <Compass className='mr-2 h-4 w-4' />,
   },
   {
-    title: 'Saved',
-    href: '/dashboard/saved',
-    icon: <Bookmark className="mr-2 h-4 w-4"/>,
+    title: 'Leaderboard',
+    href: '/leaderboard',
+    icon: <Trophy className='mr-2 h-4 w-4' />,
   },
 ]
 

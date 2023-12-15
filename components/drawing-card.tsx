@@ -7,7 +7,7 @@ import { Button } from '@/ui/button'
 import { Close, PopoverClose } from '@radix-ui/react-popover'
 import { MoreVertical, Trash, Users } from 'lucide-react'
 
-import { creteTimeAgo } from '@/lib/utils'
+import { createTimeAgo } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog,
@@ -36,7 +36,7 @@ interface DrawingProps {
 const MoreAction = () => (
   <Popover>
     <PopoverTrigger asChild>
-      <MoreVertical className='cursor-pointer' size={18} />
+      <MoreVertical className='cursor-pointer' size={20} />
     </PopoverTrigger>
     <PopoverContent>
       <PopoverClose>
@@ -73,15 +73,10 @@ const MoreAction = () => (
   </Popover>
 )
 
-export function DrawingDisplayCard({ data }: DrawingProps) {
+export function DrawingCard({ data }: DrawingProps) {
   return (
     <Card className='w-full'>
       <CardContent>
-        <div className='flex items-center justify-end'>
-          <p className='text-sm text-muted-foreground'>
-            {creteTimeAgo(new Date(data?.created_at))}
-          </p>
-        </div>
         <Link href={`/canvas/${data?.id}`}>
           <Image
             src={data?.preview || '/default.png'}
@@ -92,9 +87,14 @@ export function DrawingDisplayCard({ data }: DrawingProps) {
           />
         </Link>
         <div className='flex items-center justify-between'>
-          <Link href={`/canvas/${data?.id}`}>
-            <p className='font-semibold text-xl flex-1'>{data.prompt}</p>
-          </Link>
+          <div>
+            <Link href={`/canvas/${data?.id}`}>
+              <p className='font-semibold text-xl flex-1'>{data.prompt}</p>
+            </Link>
+            <p className='text-sm text-muted-foreground'>
+              {createTimeAgo(new Date(data?.created_at))}
+            </p>
+          </div>
           <MoreAction />
         </div>
       </CardContent>

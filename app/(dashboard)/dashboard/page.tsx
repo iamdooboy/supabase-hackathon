@@ -9,9 +9,10 @@ import {
 
 import { getCurrentUser } from '@/lib/session'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DashboardHeader } from '@/components/dashboard-header'
-import { DrawingDisplayCardList } from '@/components/drawing-display-card-list'
+import { DrawingCard } from '@/components/drawing-card'
+import { DrawingCardList } from '@/components/drawing-card-list'
 import { NewDrawingButton } from '@/components/new-drawing-button'
+import { PageHeader } from '@/components/page-header'
 
 export const metadata = {
   title: 'Dashboard',
@@ -45,24 +46,24 @@ export default async function DashboardPage() {
   ])
 
   return (
-    <div className='flex min-h-screen flex-col space-y-6'>
-      <DashboardHeader heading='Drawings'>
+    <>
+      <PageHeader title='Drawings'>
         <form action={createNewDrawing}>
           <NewDrawingButton />
         </form>
-      </DashboardHeader>
+      </PageHeader>
       <Tabs defaultValue='private'>
         <TabsList>
           <TabsTrigger value='private'>Private</TabsTrigger>
           <TabsTrigger value='public'>Public</TabsTrigger>
         </TabsList>
         <TabsContent value='private'>
-          <DrawingDisplayCardList posts={privatePosts} />
+          <DrawingCardList posts={privatePosts} />
         </TabsContent>
         <TabsContent value='public'>
-          <DrawingDisplayCardList posts={publicPosts} />
+          <DrawingCardList posts={publicPosts} />
         </TabsContent>
       </Tabs>
-    </div>
+    </>
   )
 }

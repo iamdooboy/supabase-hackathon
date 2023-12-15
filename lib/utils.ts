@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function creteTimeAgo(date: Date) {
+export function createTimeAgo(date: Date) {
   const timeAgo = new TimeAgo('en-US')
   return timeAgo.format(date)
 }
