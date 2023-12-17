@@ -1,10 +1,9 @@
 import dynamic from 'next/dynamic'
 import { cookies } from 'next/headers'
 import { DrawingCanvasProps } from '@/types'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 
 import { CanvasHeader } from '@/components/canvas-header'
-import { DrawingToolbar } from '@/components/drawing-toolbar'
 
 const DrawingCanvas = dynamic<{ data: DrawingCanvasProps }>(
   () => import('@/components/drawing-canvas') as any,
@@ -18,7 +17,19 @@ export default async function DrawingPadPage({
 }: {
   params: { id: string }
 }) {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
   const { data } = await supabase
     .from('drawings')
     .select('*')

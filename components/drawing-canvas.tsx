@@ -3,7 +3,7 @@
 import React from 'react'
 import { DrawingToolbar } from '@/drawing-toolbar'
 import { DrawingCanvasProps } from '@/types'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { Layer, Line, Stage, StageProps } from 'react-konva'
 
 import { OldDrawing } from './old-drawing'
@@ -15,7 +15,10 @@ function DrawingCanvas({ data }: { data: DrawingCanvasProps }) {
   const [lines, setLines] = React.useState<any[]>([])
   const isDrawing = React.useRef(false)
 
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const handleMouseDown = (e: StageProps) => {
     isDrawing.current = true

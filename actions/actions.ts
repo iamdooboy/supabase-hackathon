@@ -2,10 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import {
-  createServerActionClient,
-  createServerComponentClient,
-} from '@supabase/auth-helpers-nextjs'
+import { CookieOptions, createServerClient } from '@supabase/ssr'
 import { generateFromEmail } from 'unique-username-generator'
 
 import { getCurrentUser } from '@/lib/session'
@@ -15,7 +12,25 @@ interface DrawingProps {
   prompt: string | null
 }
 
-const supabase = createServerComponentClient({ cookies })
+const cookieStore = cookies()
+
+const supabase = createServerClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    cookies: {
+      get(name: string) {
+        return cookieStore.get(name)?.value
+      },
+      set(name: string, value: string, options: CookieOptions) {
+        cookieStore.set({ name, value, ...options })
+      },
+      remove(name: string, options: CookieOptions) {
+        cookieStore.set({ name, value: '', ...options })
+      },
+    },
+  }
+)
 
 export const signOut = async () => {
   await supabase.auth.signOut()
@@ -36,10 +51,8 @@ export const signOut = async () => {
 // action.ts
 export async function createNewDrawing() {
   const user = await getCurrentUser()
-
   const username = generateFromEmail(user?.email!, 4)
 
-  const supabase = createServerComponentClient({ cookies })
   const random = Math.floor(Math.random() * 101)
   const { data: promptData, error: promptError } = await supabase
     .from('drawing_prompts')
@@ -79,5 +92,4 @@ export async function guessDrawing(
       console.log(error)
     }
   }
-
 }

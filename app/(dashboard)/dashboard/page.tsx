@@ -2,10 +2,8 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createNewDrawing } from '@/actions/actions'
 import { Database } from '@/types'
-import {
-  createServerComponentClient,
-  User,
-} from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
+import { User } from '@supabase/supabase-js'
 
 import { getCurrentUser } from '@/lib/session'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -17,8 +15,19 @@ import { PageHeader } from '@/components/page-header'
 export const metadata = {
   title: 'Dashboard',
 }
+const cookieStore = cookies()
 
-const supabase = createServerComponentClient<Database>({ cookies })
+const supabase = createServerClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    cookies: {
+      get(name: string) {
+        return cookieStore.get(name)?.value
+      },
+    },
+  }
+)
 
 async function getDrawings(privacy: string, user: User) {
   const { data, error } = await supabase
@@ -33,7 +42,7 @@ async function getDrawings(privacy: string, user: User) {
 async function initializePoints(user: User) {
   const { data, error } = await supabase
     .from('points')
-    .insert({user_id: user.id})
+    .insert({ user_id: user.id })
 }
 
 export default async function DashboardPage() {

@@ -1,12 +1,9 @@
 'use client'
 
-import Link from 'next/link'
-import router from 'next/router'
 import { signOut } from '@/actions/actions'
 import { SignOut } from '@/sign-out'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Separator } from '@/ui/separator'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { ChevronDown, UserRound } from 'lucide-react'
 
 import { Button } from './ui/button'

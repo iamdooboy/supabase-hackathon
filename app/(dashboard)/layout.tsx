@@ -1,36 +1,31 @@
 import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { Database } from '@/types'
-import {
-  createServerComponentClient,
-  User,
-} from '@supabase/auth-helpers-nextjs'
 
 import { getCurrentUser } from '@/lib/session'
 import { Navbar } from '@/components/navbar'
 import { Sidebar } from '@/components/sidebar'
 
 interface DashboardLayoutProps {
-  explore?: React.ReactNode
   children?: React.ReactNode
 }
 
-const supabase = createServerComponentClient<Database>({ cookies })
-
-// async function initializePoints(user: User) {
+// async function initializePoints(session: Session | null) {
+//   const user = session?.user
 //   const { data, error } = await supabase
 //     .from('points')
-//     .insert({ user_id: user.id })
+//     .insert({ user_id: user?.id })
 //     .select()
 //   return data?.at(0).points
 // }
 
-// async function getPoints(user: User) {
+// async function getPoints(session: Session | null) {
+//   const user = session?.user
 //   try {
 //     const { data } = await supabase
 //       .from('points')
 //       .select('points')
-//       .eq('user_id', user.id)
+//       .eq('user_id', user?.id)
 //     return data
 //     //return null
 //   } catch (error) {
@@ -44,19 +39,21 @@ export default async function DashboardLayout({
 }: DashboardLayoutProps) {
   const user = await getCurrentUser()
 
-  if (!user) {
-    return notFound()
-  }
+  // const cookieStore = cookies()
+  // const supabase = createServerComponentClient({ cookies: () => cookieStore })
 
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession()
 
-  // let points = await getPoints(user)
+  // let points = await getPoints(session)
   // console.log(points?.at(0)?.points, '1')
 
-// if (points === null || points === undefined) {
-//   points = await initializePoints(user)
-// }
+  // if (points === null || points === undefined) {
+  //   points = await initializePoints(session)
+  // }
 
-// console.log(points, '2')
+  // console.log(points, '2')
 
   return (
     <>

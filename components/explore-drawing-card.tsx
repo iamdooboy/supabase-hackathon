@@ -3,7 +3,6 @@
 import React from 'react'
 import Image from 'next/image'
 import { guessDrawing } from '@/actions/actions'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Loader2, Sparkles } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
 
@@ -21,6 +20,7 @@ import {
 
 import { Button } from './ui/button'
 import { Input } from './ui/input'
+import { createBrowserClient } from '@supabase/ssr'
 
 interface DrawingProps {
   data: {
@@ -33,10 +33,16 @@ interface DrawingProps {
 }
 
 export function ExploreDrawingCard({ data }: DrawingProps) {
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const [showBanner, setShowBanner] = React.useState(false)
   const { pending } = useFormStatus()
-  const guessDrawingWithId = guessDrawing.bind(null, { prompt: data.prompt, id: data.id })
+  const guessDrawingWithId = guessDrawing.bind(null, {
+    prompt: data.prompt,
+    id: data.id,
+  })
 
   const initialGuesses = async () => {
     const { data: userData } = await supabase.auth.getUser()

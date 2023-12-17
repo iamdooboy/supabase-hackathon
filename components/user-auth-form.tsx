@@ -1,9 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { useSearchParams } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 import { Github, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -22,7 +21,10 @@ const userAuthSchema = z.object({
 type FormData = z.infer<typeof userAuthSchema>
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const {
     register,
@@ -34,7 +36,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [isGitHubLoading, setIsGitHubLoading] = React.useState<boolean>(false)
 
-
   async function onSubmit(data: FormData) {
     //NEED TO UPDATE
     setIsLoading(true)
@@ -44,12 +45,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const signInGithub = async () => {
     setIsGitHubLoading(true)
     await supabase.auth.signInWithOAuth({
-      provider: "github",
+      provider: 'github',
       options: {
         redirectTo: `${location.origin}/auth/callback`,
       },
-    });
-  };
+    })
+  }
 
   return (
     <div className={cn('grid gap-6', className)} {...props}>

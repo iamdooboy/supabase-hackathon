@@ -1,18 +1,30 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { Database } from '@/types'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 
 import { getCurrentUser } from '@/lib/session'
-import { PageHeader } from '@/components/page-header'
 import { ExploreDrawingCard } from '@/components/explore-drawing-card'
+import { PageHeader } from '@/components/page-header'
 
 export const metadata = {
   title: 'Explore',
 }
 
 async function getDrawings() {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const cookieStore = cookies()
+
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
   const { data, error } = await supabase
     .from('drawings')
     .select('*')
@@ -41,7 +53,7 @@ export default async function ExplorePage() {
               prompt: drawing?.prompt,
               created_at: drawing?.created_at,
               preview: drawing?.preview_data,
-              created_by: drawing?.created_by
+              created_by: drawing?.created_by,
             }}
           />
         ))}

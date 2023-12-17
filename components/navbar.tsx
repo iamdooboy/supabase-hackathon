@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { buttonVariants } from '@/ui/button'
 import { UserAccountDropdown } from '@/user-account-dropdown'
-import { User } from '@supabase/auth-helpers-nextjs'
+import { User } from '@supabase/supabase-js'
 import { Award, Paintbrush2 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -15,7 +15,7 @@ import {
 import { Label } from './ui/label'
 
 interface NavbarProps {
-  user: User
+  user: User | undefined
   points: number
 }
 
