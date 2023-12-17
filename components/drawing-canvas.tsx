@@ -66,7 +66,7 @@ function DrawingCanvas({ data }: { data: DrawingCanvasProps }) {
           draggable={tool === 'grab'}
         >
           <Layer>
-            <OldDrawing preview={data?.preview} />
+            {data.preview && <OldDrawing preview={data?.preview} />}
             {lines.map((line, i) => (
               <Line
                 key={i}

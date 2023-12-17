@@ -30,6 +30,12 @@ async function getDrawings(privacy: string, user: User) {
   return { data, error }
 }
 
+async function initializePoints(user: User) {
+  const { data, error } = await supabase
+    .from('points')
+    .insert({user_id: user.id})
+}
+
 export default async function DashboardPage() {
   const user = await getCurrentUser()
 
@@ -39,10 +45,12 @@ export default async function DashboardPage() {
 
   const privateData = await getDrawings('private', user)
   const publicData = await getDrawings('public', user)
+  const pointsData = await initializePoints(user)
 
-  const [privatePosts, publicPosts] = await Promise.all([
+  const [privatePosts, publicPosts, points] = await Promise.all([
     privateData,
     publicData,
+    pointsData,
   ])
 
   return (

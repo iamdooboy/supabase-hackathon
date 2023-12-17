@@ -1,77 +1,129 @@
+'use client'
+
+import React from 'react'
 import Image from 'next/image'
+import { guessDrawing } from '@/actions/actions'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Loader2, Sparkles } from 'lucide-react'
+import { useFormStatus } from 'react-dom'
 
 import { createTimeAgo } from '@/lib/utils'
+import { Alert, AlertTitle } from '@/components/ui/alert'
+import { Card, CardContent } from '@/components/ui/card'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+
+import { Button } from './ui/button'
+import { Input } from './ui/input'
 
 interface DrawingProps {
   data: {
-    id: string | null
+    id: string
     prompt: string | null
     preview: string | null
     created_at: string
-    create_by: string | null
+    created_by: string | null
   }
 }
 
 export function ExploreDrawingCard({ data }: DrawingProps) {
+  const supabase = createClientComponentClient()
+  const [showBanner, setShowBanner] = React.useState(false)
+  const { pending } = useFormStatus()
+  const guessDrawingWithId = guessDrawing.bind(null, { prompt: data.prompt, id: data.id })
+
+  const initialGuesses = async () => {
+    const { data: userData } = await supabase.auth.getUser()
+
+    try {
+      const { data: guessData } = await supabase
+        .from('guess')
+        .select('id, guess_remaining')
+        .eq('drawing_id', data.id)
+        .eq('user_id', userData?.user?.id)
+
+      if (guessData?.at(0)?.guess_remaining === 0) {
+        setShowBanner(true)
+      }
+
+      if (guessData?.length! > 0) {
+        return
+      }
+
+      await supabase.from('guess').insert({
+        guess_remaining: 3,
+        drawing_id: data.id,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
-    <Card className='w-full'>
-      <CardContent>
-        <Image
-          src={data?.preview || '/default.png'}
-          alt=''
-          className='h-[200px] w-auto'
-          height={400}
-          width={200}
-        />
-        <div className='space-y-1 mt-2'>
-          <div className='font-semibold'>{data?.create_by}</div>
-          <div className='text-sm text-muted-foreground'>
-            {createTimeAgo(new Date(data?.created_at))}
-          </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Card className='w-full' onClick={initialGuesses}>
+          <CardContent>
+            <Image
+              src={data?.preview || '/default.png'}
+              alt=''
+              className='h-[200px] w-auto'
+              height={400}
+              width={200}
+            />
+            <div className='space-y-1 mt-2'>
+              <div className='font-semibold'>{data?.created_by}</div>
+              <div className='text-sm text-muted-foreground'>
+                {createTimeAgo(new Date(data?.created_at))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            Guess this drawing within 3 tries to earn points!
+          </DialogTitle>
+
+          {showBanner && (
+            <Alert className='mt-4'>
+              <Sparkles className='h-4 w-4' />
+              <AlertTitle>You can't earn point for this drawing</AlertTitle>
+            </Alert>
+          )}
+        </DialogHeader>
+        <div className='border rounded-lg shadow-sm'>
+          <Image
+            src={data?.preview || '/default.png'}
+            alt=''
+            className='w-auto h-auto'
+            height={500}
+            width={500}
+          />
         </div>
-      </CardContent>
-    </Card>
+        <form action={guessDrawingWithId}>
+          <div className='flex gap-3'>
+            <Input
+              required
+              name='guess'
+              placeholder='Enter your guess here'
+              className='underline underline-offset-4 font-semibold text-lg'
+            />
+            <Button type='submit'>
+              {pending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+              Submit
+            </Button>
+          </div>
+        </form>
+        <DialogFooter></DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
-
-const test = (
-  <div className='relative flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-96'>
-    <div className='relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white bg-clip-border rounded-xl h-96'>
-      <img
-        src='https://images.unsplash.com/photo-1629367494173-c78a56567877?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=927&amp;q=80'
-        alt='card-image'
-        className='object-cover w-full h-full'
-      />
-    </div>
-    <div className='p-6'>
-      <div className='flex items-center justify-between mb-2'>
-        <p className='block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900'>
-          Apple AirPods
-        </p>
-        <p className='block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900'>
-          $95.00
-        </p>
-      </div>
-      <p className='block font-sans text-sm antialiased font-normal leading-normal text-gray-700 opacity-75'>
-        With plenty of talk and listen time, voice-activated Siri access, and an
-        available wireless charging case.
-      </p>
-    </div>
-    <div className='p-6 pt-0'>
-      <button
-        className='align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg shadow-gray-900/10 hover:shadow-gray-900/20 focus:opacity-[0.85] active:opacity-[0.85] active:shadow-none block w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100'
-        type='button'
-      >
-        Add to Cart
-      </button>
-    </div>
-  </div>
-)
