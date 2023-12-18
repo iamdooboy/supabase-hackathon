@@ -3,22 +3,6 @@ export type DrawingCanvasProps = {
   id: string
 }
 
-export type SupabaseDataProps = {
-  data: [
-    {
-      created_at: string
-      created_by: string | null
-      id: string
-      preview_data: string | null
-      privacy: string | null
-      prompt: string | null
-      user_id: string | null
-    },
-  ]
-  status: number
-  statusText: string
-}
-
 export type Json =
   | string
   | number
@@ -49,6 +33,7 @@ export interface Database {
         Row: {
           created_at: string
           created_by: string | null
+          guessed_by: string | null
           id: string
           preview_data: string | null
           privacy: string | null
@@ -58,6 +43,7 @@ export interface Database {
         Insert: {
           created_at?: string
           created_by?: string | null
+          guessed_by?: string | null
           id?: string
           preview_data?: string | null
           privacy?: string | null
@@ -67,11 +53,112 @@ export interface Database {
         Update: {
           created_at?: string
           created_by?: string | null
+          guessed_by?: string | null
           id?: string
           preview_data?: string | null
           privacy?: string | null
           prompt?: string | null
           user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'drawings_guessed_by_fkey'
+            columns: ['guessed_by']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      guess: {
+        Row: {
+          created_at: string
+          drawing_id: string | null
+          guess_remaining: number | null
+          id: string
+          solved: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          drawing_id?: string | null
+          guess_remaining?: number | null
+          id?: string
+          solved?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          drawing_id?: string | null
+          guess_remaining?: number | null
+          id?: string
+          solved?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'guess_drawing_id_fkey'
+            columns: ['drawing_id']
+            isOneToOne: false
+            referencedRelation: 'drawings'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'guess_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      points: {
+        Row: {
+          id: string
+          sum_points: number | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          sum_points?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          sum_points?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'points_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      users: {
+        Row: {
+          avatar_url: string | null
+          email: string
+          full_name: string | null
+          id: string
+          user_name: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          user_name?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          user_name?: string | null
         }
         Relationships: []
       }
@@ -80,7 +167,20 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      guess: {
+        Args: {
+          drawing_id: string
+          user_id: string
+        }
+        Returns: undefined
+      }
+      increment_points: {
+        Args: {
+          earned_points: number
+          row_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

@@ -77,9 +77,9 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
               height={400}
               width={200}
             />
-            <div className='space-y-1 mt-2'>
+            <div className='mt-2 space-y-1'>
               <div className='font-semibold'>{data?.created_by}</div>
-              <div className='text-sm text-muted-foreground'>
+              <div className='text-muted-foreground text-sm'>
                 {createTimeAgo(new Date(data?.created_at))}
               </div>
             </div>
@@ -96,15 +96,15 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
           {showBanner && (
             <Alert className='mt-4'>
               <Sparkles className='h-4 w-4' />
-              <AlertTitle>You can't earn point for this drawing</AlertTitle>
+              <AlertTitle>You can&apos;t earn point for this drawing</AlertTitle>
             </Alert>
           )}
         </DialogHeader>
-        <div className='border rounded-lg shadow-sm'>
+        <div className='rounded-lg border shadow-sm'>
           <Image
             src={data?.preview || '/default.png'}
             alt=''
-            className='w-auto h-auto'
+            className='h-auto w-auto'
             height={500}
             width={500}
           />

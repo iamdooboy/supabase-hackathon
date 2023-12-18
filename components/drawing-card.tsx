@@ -83,9 +83,9 @@ export function DrawingCard({ data }: DrawingProps) {
         <div className='flex items-center justify-between'>
           <div>
             <Link href={`/canvas/${data?.id}`}>
-              <p className='font-semibold text-xl flex-1'>{data.prompt}</p>
+              <p className='flex-1 text-xl font-semibold'>{data.prompt}</p>
             </Link>
-            <p className='text-sm text-muted-foreground'>
+            <p className='text-muted-foreground text-sm'>
               {createTimeAgo(new Date(data?.created_at))}
             </p>
           </div>
@@ -112,7 +112,7 @@ export function MoreAction({ action }: MoreActionProps) {
         <Button
           onClick={action.toggle}
           variant='ghost'
-          className='flex gap-2 justify-start items-center'
+          className='flex items-center justify-start gap-2'
         >
           <Users size={14} />
           Make {action.privacy}
@@ -121,7 +121,7 @@ export function MoreAction({ action }: MoreActionProps) {
           <DialogTrigger asChild>
             <Button
               variant='ghost'
-              className='flex gap-2 w-full justify-start items-center text-red-500 hover:text-red-700'
+              className='flex w-full items-center justify-start gap-2 text-red-500 hover:text-red-700'
             >
               <Trash size={14} />
               Delete

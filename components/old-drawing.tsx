@@ -6,7 +6,7 @@ export function OldDrawing({ preview }: { preview: string }) {
   return (
     <>
       {image ? (
-        <Image image={image} />
+        <Image image={image} alt='' />
       ) : (
         <Text fontSize={30} text='Error fetching old drawing' />
       )}

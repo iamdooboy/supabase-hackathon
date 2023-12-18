@@ -31,8 +31,8 @@ export function DrawingToolbar({
   isDrawing: React.MutableRefObject<boolean>
 }) {
   return (
-    <div className='fixed bottom-4 left-1/2 transform -translate-x-1/2'>
-      <div className='flex gap-2 items-center justify-center max-w-fit shadow-md rounded-md p-2 border mx-auto bg-background'>
+    <div className='fixed bottom-4 left-1/2 -translate-x-1/2'>
+      <div className='bg-background mx-auto flex max-w-fit items-center justify-center gap-2 rounded-md border p-2 shadow-md'>
         <TooltipProvider>
           <Tooltip>
             <RadioGroup defaultValue='draw' className='grid grid-cols-2 gap-4'>
@@ -45,10 +45,10 @@ export function DrawingToolbar({
                 <Label
                   onClick={() => setTool('pen')}
                   htmlFor='draw'
-                  className='flex flex-col hover:bg-gray-200 items-center justify-between rounded-md border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:bg-gray-200 [&:has([data-state=checked])]:bg-gray-200'
+                  className='border-muted bg-popover hover:bg-accent hover:text-accent-foreground flex flex-col items-center justify-between rounded-md p-4 hover:bg-gray-200 peer-data-[state=checked]:bg-gray-200 [&:has([data-state=checked])]:bg-gray-200'
                 >
                   {' '}
-                  <Pencil className='w-5 h-5 text-black' />
+                  <Pencil className='h-5 w-5 text-black' />
                 </Label>
               </div>
               <div>
@@ -60,10 +60,10 @@ export function DrawingToolbar({
                 <Label
                   onClick={() => setTool('eraser')}
                   htmlFor='erase'
-                  className='flex flex-col hover:bg-gray-200 items-center justify-between rounded-md border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:bg-gray-200 [&:has([data-state=checked])]:bg-gray-200'
+                  className='border-muted bg-popover hover:bg-accent hover:text-accent-foreground flex flex-col items-center justify-between rounded-md p-4 hover:bg-gray-200 peer-data-[state=checked]:bg-gray-200 [&:has([data-state=checked])]:bg-gray-200'
                 >
                   {' '}
-                  <Eraser className='w-5 h-5 text-black' />
+                  <Eraser className='h-5 w-5 text-black' />
                 </Label>
               </div>
             </RadioGroup>

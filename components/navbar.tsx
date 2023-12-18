@@ -49,7 +49,7 @@ export async function Navbar() {
   const points = await getPoints(user)
 
   return (
-    <header className='sticky top-0 z-40 border-b bg-background'>
+    <header className='bg-background sticky top-0 z-40 border-b'>
       <div className='container flex h-16 items-center justify-between py-4'>
         <div className='flex gap-6 md:gap-10'>
           <Link href='/' className='hidden items-center space-x-2 md:flex'>
@@ -59,12 +59,12 @@ export async function Navbar() {
         </div>
 
         {user ? (
-          <div className='flex gap-4 justify-center items-center'>
+          <div className='flex items-center justify-center gap-4'>
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className='flex gap-1 items-center'>
-                    <Award className='w-5 h-5' />
+                  <span className='flex items-center gap-1'>
+                    <Award className='h-5 w-5' />
                     <Label className='text-lg'>{points}</Label>
                   </span>
                 </TooltipTrigger>

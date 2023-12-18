@@ -38,7 +38,7 @@ export function UserAccountDropdown({ user }: UserAccountNavProps) {
             <div className='flex flex-col space-y-1 leading-none'>
               {user.name && <p className='font-medium'>{user.name}</p>}
               {user.email && (
-                <p className='text-sm text-muted-foreground'>{user.email}</p>
+                <p className='text-muted-foreground text-sm'>{user.email}</p>
               )}
             </div>
           </div>

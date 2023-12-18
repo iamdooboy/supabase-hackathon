@@ -18,7 +18,7 @@ interface Props {
 
 export function DrawingCardList({ posts }: Props) {
   return (
-    <div className='py-3 flex flex-col items-start md:grid md:grid-cols-3 gap-4'>
+    <div className='flex flex-col items-start gap-4 py-3 md:grid md:grid-cols-3'>
       {posts?.data?.length === 0 && (
         <p className='text-muted-foreground text-sm'>Start a new drawing!</p>
       )}

@@ -8,7 +8,7 @@ export function SignOut() {
   const [isLoading, setIsloading] = useState(false)
 
   return (
-    <Button disabled={isLoading} className='gap-2 w-full'>
+    <Button disabled={isLoading} className='w-full gap-2'>
       {isLoading ? (
         <>
           <Loader2 size={18} className='animate-spin' /> Signing out...

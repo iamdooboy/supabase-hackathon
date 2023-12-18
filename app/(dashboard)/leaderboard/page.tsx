@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import { Database } from '@/types'
 import { createServerClient } from '@supabase/ssr'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -7,7 +8,7 @@ import { PageHeader } from '@/components/page-header'
 async function getUser() {
   const cookieStore = cookies()
 
-  const supabase = createServerClient(
+  const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -29,20 +30,21 @@ async function getUser() {
 
 export default async function LeaderboardPage() {
   const { data } = await getUser()
+  console.log(data)
   return (
     <>
       <PageHeader title='Leaderboard' />
       <div className='space-y-8'>
-        {data?.map((list,index) => (
+        {data?.map((list, index) => (
           <div key={index} className='flex items-center'>
             <Avatar className='h-9 w-9'>
-              <AvatarImage src={list.users.avatar_url} alt='Avatar' />
+              <AvatarImage src={list?.users?.avatar_url!} alt='Avatar' />
               <AvatarFallback>NO</AvatarFallback>
             </Avatar>
             <div className='ml-4 space-y-1'>
               <p className='text-sm font-medium leading-none'>
                 {' '}
-                {list.users.full_name}
+                {list.users?.full_name}
               </p>
             </div>
             <div className='ml-auto font-medium'>{list.sum_points}</div>

@@ -59,7 +59,7 @@ function DrawingCanvas({ data }: { data: DrawingCanvasProps }) {
 
   return (
     <>
-      <div className='flex-1 grid w-full bg-gray-200 min-h-[calc(100vh-65px)] max-h-[calc(100vh-65px)] overflow-auto'>
+      <div className='grid max-h-[calc(100vh-65px)] min-h-[calc(100vh-65px)] w-full flex-1 overflow-auto bg-gray-200'>
         <Stage
           width={window.innerWidth}
           height={window.innerHeight}

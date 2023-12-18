@@ -40,15 +40,7 @@ interface SubmissionProps {
 }
 
 export function SubmissionForm({ data }: SubmissionProps) {
-  if (data.isSolved) {
-    return (
-      <Input
-        value={data?.prompt!}
-        readOnly
-        className='font-medium focus-visible:ring-0 focus-visible:ring-offset-0'
-      />
-    )
-  }
+
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -99,17 +91,27 @@ export function SubmissionForm({ data }: SubmissionProps) {
     router.refresh()
   }
 
+  if (data.isSolved) {
+    return (
+      <Input
+        value={data?.prompt!}
+        readOnly
+        className='font-medium focus-visible:ring-0 focus-visible:ring-offset-0'
+      />
+    )
+  }
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='flex gap-3 items-center w-full'
+        className='flex w-full items-center gap-3'
       >
         <FormField
           control={form.control}
           name='guess'
           render={({ field }) => (
-            <FormItem className='w-full flex items-center justify-around gap-3'>
+            <FormItem className='flex w-full items-center justify-around gap-3'>
               <FormControl>
                 <Input
                   onFocus={() => setGuessedWrong(false)}

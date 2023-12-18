@@ -39,7 +39,7 @@ export default async function ExplorePage() {
   return (
     <>
       <PageHeader title='Explore' />
-      <div className='py-3 flex flex-col items-start md:grid md:grid-cols-3 gap-4'>
+      <div className='flex flex-col items-start gap-4 py-3 md:grid md:grid-cols-3'>
         {drawings?.data?.map((drawing) => (
           <ExploreDrawingCard
             key={drawing.id}
