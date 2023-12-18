@@ -2,9 +2,10 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { guessDrawing } from '@/actions/actions'
-import { Loader2, Sparkles } from 'lucide-react'
-import { useFormStatus } from 'react-dom'
+import { SubmissionForm } from '@/submission-form'
+import { createBrowserClient } from '@supabase/ssr'
+import { User } from '@supabase/supabase-js'
+import { Sparkles } from 'lucide-react'
 
 import { createTimeAgo } from '@/lib/utils'
 import { Alert, AlertTitle } from '@/components/ui/alert'
@@ -12,15 +13,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { createBrowserClient } from '@supabase/ssr'
 
 interface DrawingProps {
   data: {
@@ -37,44 +33,44 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
+
+  const [isSolved, setIsSolved] = React.useState(false)
+  const [guessRemaining, setGuessRemaining] = React.useState(3)
   const [showBanner, setShowBanner] = React.useState(false)
-  const { pending } = useFormStatus()
-  const guessDrawingWithId = guessDrawing.bind(null, {
-    prompt: data.prompt,
-    id: data.id,
-  })
+  const [currentUser, setCurrentUser] = React.useState<User | null>()
 
-  const initialGuesses = async () => {
+  const initializeGuess = async () => {
     const { data: userData } = await supabase.auth.getUser()
+    const { user } = userData
+    setCurrentUser(user)
 
-    try {
-      const { data: guessData } = await supabase
-        .from('guess')
-        .select('id, guess_remaining')
-        .eq('drawing_id', data.id)
-        .eq('user_id', userData?.user?.id)
+    const { data: guessData } = await supabase
+      .from('guess')
+      .select('id, guess_remaining, solved')
+      .eq('drawing_id', data.id)
+      .eq('user_id', userData?.user?.id)
 
-      if (guessData?.at(0)?.guess_remaining === 0) {
-        setShowBanner(true)
-      }
+    setGuessRemaining(guessData?.at(0)?.guess_remaining)
+    setIsSolved(guessData?.at(0)?.solved)
 
-      if (guessData?.length! > 0) {
-        return
-      }
-
-      await supabase.from('guess').insert({
-        guess_remaining: 3,
-        drawing_id: data.id,
-      })
-    } catch (error) {
-      console.log(error)
+    if (guessData?.at(0)?.guess_remaining === 0) {
+      setShowBanner(true)
     }
+
+    if (guessData?.length! > 0) {
+      return
+    }
+
+    await supabase.from('guess').insert({
+      guess_remaining: 3,
+      drawing_id: data.id,
+    })
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card className='w-full' onClick={initialGuesses}>
+        <Card className='w-full' onClick={initializeGuess}>
           <CardContent>
             <Image
               src={data?.preview || '/default.png'}
@@ -95,9 +91,10 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Guess this drawing within 3 tries to earn points!
+            {isSolved
+              ? 'You already guessed this drawing!'
+              : 'Guess this drawing within 3 tries to earn points!'}
           </DialogTitle>
-
           {showBanner && (
             <Alert className='mt-4'>
               <Sparkles className='h-4 w-4' />
@@ -114,21 +111,15 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
             width={500}
           />
         </div>
-        <form action={guessDrawingWithId}>
-          <div className='flex gap-3'>
-            <Input
-              required
-              name='guess'
-              placeholder='Enter your guess here'
-              className='underline underline-offset-4 font-semibold text-lg'
-            />
-            <Button type='submit'>
-              {pending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-              Submit
-            </Button>
-          </div>
-        </form>
-        <DialogFooter></DialogFooter>
+        <SubmissionForm
+          data={{
+            prompt: data?.prompt,
+            id: data?.id,
+            guess_remaining: guessRemaining,
+            user: currentUser,
+            isSolved: isSolved,
+          }}
+        />
       </DialogContent>
     </Dialog>
   )

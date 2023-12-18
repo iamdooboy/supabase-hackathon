@@ -30,6 +30,7 @@ export function DrawingCardList({ posts }: Props) {
             prompt: drawing.prompt,
             created_at: drawing.created_at,
             preview: drawing.preview_data,
+            privacy: drawing.privacy
           }}
         />
       ))}

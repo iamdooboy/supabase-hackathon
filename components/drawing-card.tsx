@@ -3,8 +3,9 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/ui/button'
-import { Close, PopoverClose } from '@radix-ui/react-popover'
+import { createBrowserClient } from '@supabase/ssr'
 import { MoreVertical, Trash, Users } from 'lucide-react'
 
 import { createTimeAgo } from '@/lib/utils'
@@ -30,50 +31,43 @@ interface DrawingProps {
     prompt: string | null
     preview: string | null
     created_at: string
+    privacy: string | null
   }
 }
 
-const MoreAction = () => (
-  <Popover>
-    <PopoverTrigger asChild>
-      <MoreVertical className='cursor-pointer' size={20} />
-    </PopoverTrigger>
-    <PopoverContent>
-      <PopoverClose>
-        <div className='flex gap-2 items-center hover:bg-[#eee] px-2 py-1 rounded-md cursor-pointer'>
-          <Users size={14} />
-          Make pubic
-        </div>
-      </PopoverClose>
-      <Dialog>
-        <DialogTrigger asChild>
-          <div className='flex gap-2 items-center hover:bg-[#eee] px-2 py-1 rounded-md cursor-pointer text-red-800'>
-            <Trash size={14} />
-            Delete
-          </div>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete the drawing?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete the
-              drawing.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Close>
-              <PopoverClose>
-                <Button variant='destructive'>Delete</Button>
-              </PopoverClose>
-            </Close>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </PopoverContent>
-  </Popover>
-)
+interface MoreActionProps {
+  action: {
+    privacy: string | null
+    toggle: () => Promise<void>
+    delete: () => Promise<void>
+  }
+}
 
 export function DrawingCard({ data }: DrawingProps) {
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+  const router = useRouter()
+
+  const privacy =
+    data?.privacy === 'public' || !data?.privacy ? 'private' : 'public'
+
+  const togglePrivacy = async (privacy: string | null) => {
+    await supabase
+      .from('drawings')
+      .update({
+        privacy,
+      })
+      .eq('id', data.id)
+    router.refresh()
+  }
+
+  const deleteDrawing = async () => {
+    await supabase.from('drawings').delete().eq('id', data.id)
+    router.refresh()
+  }
+
   return (
     <Card className='w-full'>
       <CardContent>
@@ -95,9 +89,60 @@ export function DrawingCard({ data }: DrawingProps) {
               {createTimeAgo(new Date(data?.created_at))}
             </p>
           </div>
-          <MoreAction />
+          <MoreAction
+            action={{
+              privacy,
+              toggle: () => togglePrivacy(privacy),
+              delete: () => deleteDrawing(),
+            }}
+          />
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+export function MoreAction({ action }: MoreActionProps) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <MoreVertical className='cursor-pointer' size={20} />
+      </PopoverTrigger>
+      <PopoverContent className='p-3'>
+        <Button
+          onClick={action.toggle}
+          variant='ghost'
+          className='flex gap-2 justify-start items-center'
+        >
+          <Users size={14} />
+          Make {action.privacy}
+        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant='ghost'
+              className='flex gap-2 w-full justify-start items-center text-red-500 hover:text-red-700'
+            >
+              <Trash size={14} />
+              Delete
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete the drawing?</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete the
+                drawing.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button onClick={action.delete} variant='destructive'>
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </PopoverContent>
+    </Popover>
   )
 }

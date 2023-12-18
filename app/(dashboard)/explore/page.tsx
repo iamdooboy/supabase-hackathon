@@ -34,11 +34,6 @@ async function getDrawings() {
 }
 
 export default async function ExplorePage() {
-  const user = await getCurrentUser()
-
-  if (!user) {
-    redirect('/login')
-  }
   const drawings = await getDrawings()
 
   return (

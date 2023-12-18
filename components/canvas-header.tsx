@@ -1,20 +1,25 @@
 import React from 'react'
 import Link from 'next/link'
+import { Button, buttonVariants } from '@/ui/button'
 import { ArrowLeft } from 'lucide-react'
+import { publishDrawing } from '@/actions/actions'
 
 import { cn } from '@/lib/utils'
 
-import { buttonVariants } from './ui/button'
 import { Label } from './ui/label'
 
 interface CanvasHeaderProps {
-  info: {
+  drawing: {
+    id: string
     prompt: string
     privacy: string
   }
 }
 
-export function CanvasHeader({ info }: CanvasHeaderProps) {
+export function CanvasHeader({ drawing }: CanvasHeaderProps) {
+
+  const publishDrawingById = publishDrawing.bind(null, drawing?.id)
+
   return (
     <header className='sticky top-0 z-40 border-b bg-background'>
       <div className='flex h-16 items-center justify-between p-4'>
@@ -27,14 +32,14 @@ export function CanvasHeader({ info }: CanvasHeaderProps) {
         </Link>
         <div className='px-3'>
           <Label className='text-md opacity-80'>Draw:&nbsp;</Label>
-          <Label className='font-bold underline text-lg'>{info.prompt}</Label>
+          <Label className='font-bold underline text-lg'>{drawing.prompt}</Label>
         </div>
-        <div className='flex items-center gap-4'>
-          <p className='text-sm text-muted-foreground'>{info.privacy}</p>
-          <button type='submit' className={cn(buttonVariants())}>
-            <span>Publish</span>
-          </button>
-        </div>
+        <form action={publishDrawingById} className='flex items-center gap-4'>
+          <p className='text-sm text-muted-foreground'>{drawing.privacy}</p>
+          <Button type='submit'>
+            Publish
+          </Button>
+        </form>
       </div>
     </header>
   )

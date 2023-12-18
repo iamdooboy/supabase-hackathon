@@ -69,16 +69,16 @@ export default async function DashboardPage() {
           <NewDrawingButton />
         </form>
       </PageHeader>
-      <Tabs defaultValue='private'>
+      <Tabs defaultValue='public'>
         <TabsList>
-          <TabsTrigger value='private'>Private</TabsTrigger>
           <TabsTrigger value='public'>Public</TabsTrigger>
+          <TabsTrigger value='private'>Private</TabsTrigger>
         </TabsList>
-        <TabsContent value='private'>
-          <DrawingCardList posts={privatePosts} />
-        </TabsContent>
         <TabsContent value='public'>
           <DrawingCardList posts={publicPosts} />
+        </TabsContent>
+        <TabsContent value='private'>
+          <DrawingCardList posts={privatePosts} />
         </TabsContent>
       </Tabs>
     </>

@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { CookieOptions, createServerClient } from '@supabase/ssr'
@@ -12,27 +13,26 @@ interface DrawingProps {
   prompt: string | null
 }
 
-const cookieStore = cookies()
-
-const supabase = createServerClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  {
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value
-      },
-      set(name: string, value: string, options: CookieOptions) {
-        cookieStore.set({ name, value, ...options })
-      },
-      remove(name: string, options: CookieOptions) {
-        cookieStore.set({ name, value: '', ...options })
-      },
-    },
-  }
-)
-
 export const signOut = async () => {
+  const cookieStore = cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          cookieStore.set({ name, value, ...options })
+        },
+        remove(name: string, options: CookieOptions) {
+          cookieStore.set({ name, value: '', ...options })
+        },
+      },
+    }
+  )
   await supabase.auth.signOut()
   redirect('/')
 }
@@ -50,8 +50,28 @@ export const signOut = async () => {
 
 // action.ts
 export async function createNewDrawing() {
+  const cookieStore = cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          cookieStore.set({ name, value, ...options })
+        },
+        remove(name: string, options: CookieOptions) {
+          cookieStore.set({ name, value: '', ...options })
+        },
+      },
+    }
+  )
   const user = await getCurrentUser()
-  const username = generateFromEmail(user?.email!, 4)
+  const username = generateFromEmail(user?.email!)
+
 
   const random = Math.floor(Math.random() * 101)
   const { data: promptData, error: promptError } = await supabase
@@ -79,7 +99,25 @@ export async function guessDrawing(
   drawingData: DrawingProps,
   inputData: FormData
 ) {
-  console.log(drawingData.prompt)
+  const cookieStore = cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          cookieStore.set({ name, value, ...options })
+        },
+        remove(name: string, options: CookieOptions) {
+          cookieStore.set({ name, value: '', ...options })
+        },
+      },
+    }
+  )
   const user = await getCurrentUser()
   const content = inputData.get('guess')
   if (drawingData.prompt !== content) {
@@ -92,4 +130,36 @@ export async function guessDrawing(
       console.log(error)
     }
   }
+}
+
+export async function publishDrawing(drawing_id: string) {
+  const cookieStore = cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          cookieStore.set({ name, value, ...options })
+        },
+        remove(name: string, options: CookieOptions) {
+          cookieStore.set({ name, value: '', ...options })
+        },
+      },
+    }
+  )
+
+  await supabase
+    .from('drawings')
+    .update({
+      privacy: 'public',
+    })
+    .eq('id', drawing_id)
+
+  revalidatePath('/dashboard')
+  redirect('/dashboard')
 }

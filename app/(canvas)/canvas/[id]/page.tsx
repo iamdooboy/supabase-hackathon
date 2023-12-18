@@ -38,7 +38,8 @@ export default async function DrawingPadPage({
   return (
     <>
       <CanvasHeader
-        info={{
+        drawing={{
+          id: data?.at(0).id,
           prompt: data?.at(0).prompt,
           privacy: data?.at(0).privacy,
         }}
