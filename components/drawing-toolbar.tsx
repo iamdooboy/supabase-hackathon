@@ -35,40 +35,7 @@ export function DrawingToolbar({
       <div className='flex gap-2 items-center justify-center max-w-fit shadow-md rounded-md p-2 border mx-auto bg-background'>
         <TooltipProvider>
           <Tooltip>
-            <RadioGroup defaultValue='draw' className='grid grid-cols-3 gap-4'>
-              <div>
-                <RadioGroupItem
-                  value='grab'
-                  id='grab'
-                  className='peer sr-only'
-                />
-                <TooltipTrigger asChild>
-                  <Label
-                    onClick={() => setTool('grab')}
-                    htmlFor='grab'
-                    className='flex flex-col hover:bg-gray-200 items-center justify-between rounded-md border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:bg-gray-200 [&:has([data-state=checked])]:bg-gray-200'
-                  >
-                    <Move className='w-5 h-5 text-black' />
-                  </Label>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div className='grid gap-2 p-2'>
-                    <div className='flex items-center justify-between'>
-                      <Label htmlFor='temperature'>Stroke Width</Label>
-                      <span className='w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground hover:border-border'>
-                        34
-                      </span>
-                    </div>
-                    <Slider
-                      id='temperature'
-                      max={1}
-                      step={0.1}
-                      className='[&_[role=slider]]:h-4 [&_[role=slider]]:w-4'
-                      aria-label='Temperature'
-                    />
-                  </div>
-                </TooltipContent>
-              </div>
+            <RadioGroup defaultValue='draw' className='grid grid-cols-2 gap-4'>
               <div>
                 <RadioGroupItem
                   value='draw'

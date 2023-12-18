@@ -1,13 +1,11 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createNewDrawing } from '@/actions/actions'
-import { Database } from '@/types'
 import { createServerClient } from '@supabase/ssr'
 import { User } from '@supabase/supabase-js'
 
 import { getCurrentUser } from '@/lib/session'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DrawingCard } from '@/components/drawing-card'
 import { DrawingCardList } from '@/components/drawing-card-list'
 import { NewDrawingButton } from '@/components/new-drawing-button'
 import { PageHeader } from '@/components/page-header'
@@ -39,12 +37,6 @@ async function getDrawings(privacy: string, user: User) {
   return { data, error }
 }
 
-async function initializePoints(user: User) {
-  const { data, error } = await supabase
-    .from('points')
-    .insert({ user_id: user.id })
-}
-
 export default async function DashboardPage() {
   const user = await getCurrentUser()
 
@@ -54,12 +46,10 @@ export default async function DashboardPage() {
 
   const privateData = await getDrawings('private', user)
   const publicData = await getDrawings('public', user)
-  const pointsData = await initializePoints(user)
 
-  const [privatePosts, publicPosts, points] = await Promise.all([
+  const [privatePosts, publicPosts] = await Promise.all([
     privateData,
     publicData,
-    pointsData,
   ])
 
   return (

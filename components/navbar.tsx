@@ -54,7 +54,7 @@ export async function Navbar() {
         <div className='flex gap-6 md:gap-10'>
           <Link href='/' className='hidden items-center space-x-2 md:flex'>
             <Paintbrush2 />
-            <span className='hidden font-bold sm:inline-block'>Draw</span>
+            <span className='hidden font-bold sm:inline-block'>DnG</span>
           </Link>
         </div>
 

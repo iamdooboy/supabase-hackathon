@@ -70,7 +70,7 @@ export async function createNewDrawing() {
     }
   )
   const user = await getCurrentUser()
-  const username = generateFromEmail(user?.email!)
+
 
 
   const random = Math.floor(Math.random() * 101)
@@ -83,7 +83,7 @@ export async function createNewDrawing() {
     .from('drawings')
     .insert({
       prompt: promptData?.at(0)?.prompt,
-      created_by: username,
+      created_by: user?.user_metadata.full_name,
       preview_data: '',
     })
     .select()

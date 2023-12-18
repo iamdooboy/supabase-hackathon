@@ -35,7 +35,6 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
   )
 
   const [isSolved, setIsSolved] = React.useState(false)
-  const [guessRemaining, setGuessRemaining] = React.useState(3)
   const [showBanner, setShowBanner] = React.useState(false)
   const [currentUser, setCurrentUser] = React.useState<User | null>()
 
@@ -50,7 +49,6 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
       .eq('drawing_id', data.id)
       .eq('user_id', userData?.user?.id)
 
-    setGuessRemaining(guessData?.at(0)?.guess_remaining)
     setIsSolved(guessData?.at(0)?.solved)
 
     if (guessData?.at(0)?.guess_remaining === 0) {
@@ -70,7 +68,7 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card className='w-full' onClick={initializeGuess}>
+        <Card className='w-full cursor-pointer' onClick={initializeGuess}>
           <CardContent>
             <Image
               src={data?.preview || '/default.png'}
@@ -115,7 +113,6 @@ export function ExploreDrawingCard({ data }: DrawingProps) {
           data={{
             prompt: data?.prompt,
             id: data?.id,
-            guess_remaining: guessRemaining,
             user: currentUser,
             isSolved: isSolved,
           }}

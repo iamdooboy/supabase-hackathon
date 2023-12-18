@@ -34,17 +34,26 @@ interface SubmissionProps {
   data: {
     id: string | null
     prompt: string | null
-    guess_remaining: number | null
     user: User | null | undefined
     isSolved: boolean | null
   }
 }
 
 export function SubmissionForm({ data }: SubmissionProps) {
+  if (data.isSolved) {
+    return (
+      <Input
+        value={data?.prompt!}
+        readOnly
+        className='font-medium focus-visible:ring-0 focus-visible:ring-offset-0'
+      />
+    )
+  }
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
+  const [solved, setSolved] = React.useState(false)
   const [guessedWrong, setGuessedWrong] = React.useState(false)
   const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,9 +64,8 @@ export function SubmissionForm({ data }: SubmissionProps) {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const guessRemaining = data.guess_remaining
     const drawing_id = data.id
-    const user_id = data.user?.id
+    const user_id = data?.user?.id
     const prompt = data.prompt
 
     if (prompt !== values.guess) {
@@ -73,6 +81,7 @@ export function SubmissionForm({ data }: SubmissionProps) {
       return
     }
 
+    setSolved(true)
     const updateSolved = await supabase
       .from('guess')
       .update({
@@ -82,23 +91,12 @@ export function SubmissionForm({ data }: SubmissionProps) {
       .eq('user_id', user_id)
       .select('guess_remaining')
 
-    const updatePoints = await supabase.rpc('increment', {
-      x: guessRemaining,
+    const updatePoints = await supabase.rpc('increment_points', {
+      earned_points: updateSolved?.data?.at(0)?.guess_remaining,
       row_id: user_id,
     })
 
-    await Promise.all([updatePoints, updateSolved])
     router.refresh()
-  }
-
-  if (data.isSolved) {
-    return (
-      <Input
-        value={data?.prompt!}
-        readOnly
-        className='font-medium focus-visible:ring-0 focus-visible:ring-offset-0'
-      />
-    )
   }
 
   return (
@@ -129,6 +127,7 @@ export function SubmissionForm({ data }: SubmissionProps) {
           )}
         />
       </form>
+      {solved && <FormMessage className='text-green-600'>Correct!</FormMessage>}
       {guessedWrong && <FormMessage>Try again</FormMessage>}
     </Form>
   )

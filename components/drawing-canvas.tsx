@@ -66,7 +66,6 @@ function DrawingCanvas({ data }: { data: DrawingCanvasProps }) {
           onMouseDown={handleMouseDown}
           onMousemove={handleMouseMove}
           onMouseup={handleMouseUp}
-          draggable={tool === 'grab'}
         >
           <Layer>
             {data.preview && <OldDrawing preview={data?.preview} />}
